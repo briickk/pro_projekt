@@ -6,7 +6,7 @@ namespace api_project.Models
     public partial class AchPizzaComposition
     {
         public int PizzaCompositionId { get; set; }
-        public int Grams { get; set; }
+        public int Amount { get; set; }
         public int AchPizzaIdPizza { get; set; }
         public int AchIngredientIdIngredient { get; set; }
 
