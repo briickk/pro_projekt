@@ -10,11 +10,6 @@ namespace api_project.Models
         {
         }
 
-        public _2019SBDContext(DbContextOptions<_2019SBDContext> options)
-            : base(options)
-        {
-        }
-
         public virtual DbSet<AcAddresses> AcAddresses { get; set; }
         public virtual DbSet<AchAdditive> AchAdditive { get; set; }
         public virtual DbSet<AchCustomer> AchCustomer { get; set; }
