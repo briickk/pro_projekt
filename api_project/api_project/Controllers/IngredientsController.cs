@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using api_project.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace api_project.Controllers
 {
@@ -19,7 +20,7 @@ namespace api_project.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAcIngredients()
+        public IActionResult GetIngredients(int id)
         {
             return Ok(_context.AcIngredients.ToList());
         }
@@ -35,5 +36,48 @@ namespace api_project.Controllers
 
             return Ok(acIngredient);
         }
+
+        [HttpPost]
+        public IActionResult Create(AcIngredients newIngredient)
+        {
+            _context.AcIngredients.Add(newIngredient);
+            _context.SaveChanges();
+
+            return StatusCode(201, newIngredient);
+        }
+
+        [HttpPut]
+        public IActionResult Update(AcIngredients ingredient)
+        {
+            if (_context.AcIngredients.Count(e => e.Id == ingredient.Id) == 0)
+            {
+                return NotFound();
+            }
+
+            _context.AcIngredients.Attach(ingredient);
+            _context.Entry(ingredient).State = EntityState.Modified;
+            _context.SaveChanges();
+
+            return Ok(ingredient);
+
+        }
+
+        [HttpDelete("{id:int}")]
+        public IActionResult Delete(int id)
+        {
+            var ingredient = _context.AcIngredients.FirstOrDefault(e => e.Id == id);
+            if (ingredient == null)
+            {
+                return NotFound();
+            }
+
+            _context.AcIngredients.Remove(ingredient);
+            _context.SaveChanges();
+
+            return Ok(ingredient);
+        }
+
+
+
     }
 }
