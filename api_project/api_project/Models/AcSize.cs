@@ -7,12 +7,12 @@ namespace api_project.Models
     {
         public AcSize()
         {
-            AcPizzaDetails = new HashSet<AcPizzaDetails>();
+            AcPizzasSize = new HashSet<AcPizzasSize>();
         }
 
         public int Id { get; set; }
         public int Size { get; set; }
 
-        public ICollection<AcPizzaDetails> AcPizzaDetails { get; set; }
+        public ICollection<AcPizzasSize> AcPizzasSize { get; set; }
     }
 }

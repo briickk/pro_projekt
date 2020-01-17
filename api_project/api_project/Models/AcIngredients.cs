@@ -7,7 +7,7 @@ namespace api_project.Models
     {
         public AcIngredients()
         {
-            AcPizzaDetails = new HashSet<AcPizzaDetails>();
+            AcPizzaIngredients = new HashSet<AcPizzaIngredients>();
             AcPizzaOrder = new HashSet<AcPizzaOrder>();
         }
 
@@ -18,7 +18,7 @@ namespace api_project.Models
         public int Fat { get; set; }
         public int Carbohydrate { get; set; }
 
-        public ICollection<AcPizzaDetails> AcPizzaDetails { get; set; }
+        public ICollection<AcPizzaIngredients> AcPizzaIngredients { get; set; }
         public ICollection<AcPizzaOrder> AcPizzaOrder { get; set; }
     }
 }

@@ -19,7 +19,7 @@ namespace api_project.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAcIngredients()
+        public IActionResult GetIngredients(int id)
         {
             return Ok(_context.AcIngredients.ToList());
         }

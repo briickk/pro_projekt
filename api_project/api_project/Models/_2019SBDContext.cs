@@ -10,19 +10,27 @@ namespace api_project.Models
         {
         }
 
+        public _2019SBDContext(DbContextOptions<_2019SBDContext> options)
+            : base(options)
+        {
+        }
+
         public virtual DbSet<AcAddresses> AcAddresses { get; set; }
         public virtual DbSet<AchAdditive> AchAdditive { get; set; }
         public virtual DbSet<AchCustomer> AchCustomer { get; set; }
         public virtual DbSet<AchCustomerAlergen> AchCustomerAlergen { get; set; }
         public virtual DbSet<AchIngredient> AchIngredient { get; set; }
         public virtual DbSet<AchOrder> AchOrder { get; set; }
+        public virtual DbSet<AchOrderAdditive> AchOrderAdditive { get; set; }
+        public virtual DbSet<AchOrderPizza> AchOrderPizza { get; set; }
         public virtual DbSet<AchPizza> AchPizza { get; set; }
         public virtual DbSet<AchPizzaComposition> AchPizzaComposition { get; set; }
         public virtual DbSet<AcIngredients> AcIngredients { get; set; }
-        public virtual DbSet<AcPizzaDetails> AcPizzaDetails { get; set; }
+        public virtual DbSet<AcPizzaIngredients> AcPizzaIngredients { get; set; }
         public virtual DbSet<AcPizzaOrder> AcPizzaOrder { get; set; }
         public virtual DbSet<AcPizzaPie> AcPizzaPie { get; set; }
         public virtual DbSet<AcPizzas> AcPizzas { get; set; }
+        public virtual DbSet<AcPizzasSize> AcPizzasSize { get; set; }
         public virtual DbSet<AcSize> AcSize { get; set; }
         public virtual DbSet<AcUsers> AcUsers { get; set; }
         public virtual DbSet<Dydaktyk> Dydaktyk { get; set; }
@@ -38,7 +46,6 @@ namespace api_project.Models
         public virtual DbSet<Student> Student { get; set; }
         public virtual DbSet<StudentGrupa> StudentGrupa { get; set; }
 
-        // Unable to generate entity type for table 's15245.ACH_ORDER_COMPOSITION'. Please see the warning messages.
         // Unable to generate entity type for table 's15245.temp'. Please see the warning messages.
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -225,11 +232,75 @@ namespace api_project.Models
 
                 entity.Property(e => e.OrderStatus).HasColumnName("ORDER_STATUS");
 
+                entity.Property(e => e.PaymentType).HasColumnName("PAYMENT_TYPE");
+
                 entity.HasOne(d => d.AchCustomerIdCustomerNavigation)
                     .WithMany(p => p.AchOrder)
                     .HasForeignKey(d => d.AchCustomerIdCustomer)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("ACH_ORDER_ACH_CUSTOMER");
+            });
+
+            modelBuilder.Entity<AchOrderAdditive>(entity =>
+            {
+                entity.HasKey(e => e.IdOrderAddiive);
+
+                entity.ToTable("ACH_ORDER_ADDITIVE");
+
+                entity.Property(e => e.IdOrderAddiive)
+                    .HasColumnName("ID_ORDER_ADDIIVE")
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.AchAdditiveIdAdditive).HasColumnName("ACH_ADDITIVE_ID_ADDITIVE");
+
+                entity.Property(e => e.AchOrderIdOrder).HasColumnName("ACH_ORDER_ID_ORDER");
+
+                entity.Property(e => e.Amount).HasColumnName("AMOUNT");
+
+                entity.HasOne(d => d.AchAdditiveIdAdditiveNavigation)
+                    .WithMany(p => p.AchOrderAdditive)
+                    .HasForeignKey(d => d.AchAdditiveIdAdditive)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("ACH_ORDER_ADDITIVE_ACH_ADDITIVE");
+
+                entity.HasOne(d => d.AchOrderIdOrderNavigation)
+                    .WithMany(p => p.AchOrderAdditive)
+                    .HasForeignKey(d => d.AchOrderIdOrder)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("ACH_ORDER_ADDITIVE_ACH_ORDER");
+            });
+
+            modelBuilder.Entity<AchOrderPizza>(entity =>
+            {
+                entity.HasKey(e => e.IdOrderPizza);
+
+                entity.ToTable("ACH_ORDER_PIZZA");
+
+                entity.Property(e => e.IdOrderPizza)
+                    .HasColumnName("ID_ORDER_PIZZA")
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.AchOrderIdOrder).HasColumnName("ACH_ORDER_ID_ORDER");
+
+                entity.Property(e => e.AchPizzaIdPizza).HasColumnName("ACH_PIZZA_ID_PIZZA");
+
+                entity.Property(e => e.Amount).HasColumnName("AMOUNT");
+
+                entity.Property(e => e.PizzaDough).HasColumnName("PIZZA_DOUGH");
+
+                entity.Property(e => e.PizzaSize).HasColumnName("PIZZA_SIZE");
+
+                entity.HasOne(d => d.AchOrderIdOrderNavigation)
+                    .WithMany(p => p.AchOrderPizza)
+                    .HasForeignKey(d => d.AchOrderIdOrder)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("ACH_ORDER_COMPOSITION_ACH_ORDER");
+
+                entity.HasOne(d => d.AchPizzaIdPizzaNavigation)
+                    .WithMany(p => p.AchOrderPizza)
+                    .HasForeignKey(d => d.AchPizzaIdPizza)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("ACH_ORDER_PIZZA_ACH_PIZZA");
             });
 
             modelBuilder.Entity<AchPizza>(entity =>
@@ -249,6 +320,8 @@ namespace api_project.Models
                     .IsUnicode(false);
 
                 entity.Property(e => e.Price).HasColumnName("PRICE");
+
+                entity.Property(e => e.Type).HasColumnName("TYPE");
             });
 
             modelBuilder.Entity<AchPizzaComposition>(entity =>
@@ -265,7 +338,7 @@ namespace api_project.Models
 
                 entity.Property(e => e.AchPizzaIdPizza).HasColumnName("ACH_PIZZA_ID_PIZZA");
 
-                entity.Property(e => e.Grams).HasColumnName("grams");
+                entity.Property(e => e.Amount).HasColumnName("amount");
 
                 entity.HasOne(d => d.AchIngredientIdIngredientNavigation)
                     .WithMany(p => p.AchPizzaComposition)
@@ -305,9 +378,9 @@ namespace api_project.Models
                 entity.Property(e => e.Protein).HasColumnName("protein");
             });
 
-            modelBuilder.Entity<AcPizzaDetails>(entity =>
+            modelBuilder.Entity<AcPizzaIngredients>(entity =>
             {
-                entity.ToTable("ac_pizza_details");
+                entity.ToTable("ac_pizza_ingredients");
 
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
@@ -315,37 +388,19 @@ namespace api_project.Models
 
                 entity.Property(e => e.AcIngredientsId).HasColumnName("ac_ingredients_id");
 
-                entity.Property(e => e.AcPizzaPieId).HasColumnName("ac_pizza_pie_id");
-
                 entity.Property(e => e.AcPizzasId).HasColumnName("ac_pizzas_id");
 
-                entity.Property(e => e.AcSizeId).HasColumnName("ac_size_id");
-
-                entity.Property(e => e.Pirce).HasColumnName("pirce");
-
                 entity.HasOne(d => d.AcIngredients)
-                    .WithMany(p => p.AcPizzaDetails)
+                    .WithMany(p => p.AcPizzaIngredients)
                     .HasForeignKey(d => d.AcIngredientsId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("ac_pizza_ingredients_ac_ingredients");
 
-                entity.HasOne(d => d.AcPizzaPie)
-                    .WithMany(p => p.AcPizzaDetails)
-                    .HasForeignKey(d => d.AcPizzaPieId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("ac_pizza_details_ac_pizza_pie");
-
                 entity.HasOne(d => d.AcPizzas)
-                    .WithMany(p => p.AcPizzaDetails)
+                    .WithMany(p => p.AcPizzaIngredients)
                     .HasForeignKey(d => d.AcPizzasId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("ac_pizza_ingredients_ac_pizzas");
-
-                entity.HasOne(d => d.AcSize)
-                    .WithMany(p => p.AcPizzaDetails)
-                    .HasForeignKey(d => d.AcSizeId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("ac_pizza_ingredients_ac_size");
             });
 
             modelBuilder.Entity<AcPizzaOrder>(entity =>
@@ -359,6 +414,10 @@ namespace api_project.Models
                 entity.Property(e => e.AcAddressesId).HasColumnName("ac_addresses_id");
 
                 entity.Property(e => e.AcIngredientsId).HasColumnName("ac_ingredients_id");
+
+                entity.Property(e => e.AcPizzaPieId).HasColumnName("ac_pizza_pie_id");
+
+                entity.Property(e => e.AcPizzasSizeId).HasColumnName("ac_pizzas_size_id");
 
                 entity.Property(e => e.AcUsersId).HasColumnName("ac_users_id");
 
@@ -376,6 +435,18 @@ namespace api_project.Models
                     .WithMany(p => p.AcPizzaOrder)
                     .HasForeignKey(d => d.AcIngredientsId)
                     .HasConstraintName("ac_pizza_order_ac_ingredients_addition");
+
+                entity.HasOne(d => d.AcPizzaPie)
+                    .WithMany(p => p.AcPizzaOrder)
+                    .HasForeignKey(d => d.AcPizzaPieId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("ac_pizza_order_ac_pizza_pie");
+
+                entity.HasOne(d => d.AcPizzasSize)
+                    .WithMany(p => p.AcPizzaOrder)
+                    .HasForeignKey(d => d.AcPizzasSizeId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("ac_pizza_order_ac_pizzas_size");
 
                 entity.HasOne(d => d.AcUsers)
                     .WithMany(p => p.AcPizzaOrder)
@@ -408,6 +479,31 @@ namespace api_project.Models
                     .HasColumnName("name")
                     .HasMaxLength(50)
                     .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<AcPizzasSize>(entity =>
+            {
+                entity.ToTable("ac_pizzas_size");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.AcPizzasId).HasColumnName("ac_pizzas_id");
+
+                entity.Property(e => e.AcSizeId).HasColumnName("ac_size_id");
+
+                entity.HasOne(d => d.AcPizzas)
+                    .WithMany(p => p.AcPizzasSize)
+                    .HasForeignKey(d => d.AcPizzasId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("ac_pizzas_size_ac_pizzas");
+
+                entity.HasOne(d => d.AcSize)
+                    .WithMany(p => p.AcPizzasSize)
+                    .HasForeignKey(d => d.AcSizeId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("ac_pizzas_size_ac_size");
             });
 
             modelBuilder.Entity<AcSize>(entity =>
