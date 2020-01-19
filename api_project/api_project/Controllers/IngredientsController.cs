@@ -46,10 +46,10 @@ namespace api_project.Controllers
             return StatusCode(201, newIngredient);
         }
 
-        [HttpPut]
-        public IActionResult Update(AcIngredients ingredient)
+        [HttpPut("{id:int}")]
+        public IActionResult Update(int id, AcIngredients ingredient)
         {
-            if (_context.AcIngredients.Count(e => e.Id == ingredient.Id) == 0)
+            if (_context.AcIngredients.Count(e => e.Id == id) == 0)
             {
                 return NotFound();
             }
